@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: magento-nginx
+  namespace: magento
+  labels:
+    app: magento-nginx
+spec:
+  replicas: {{ .Values.nginx.replicas | default 1 }}
+  selector:
+    matchLabels:
+      app: magento-nginx
+  template:
+    metadata:
+      labels:
+        app: magento-nginx
+    spec:
+      containers:
+        - name: nginx
+          image: "{{ .Values.nginx.image.repository }}:{{ .Values.nginx.image.tag }}"
+          ports:
+            - containerPort: {{ .Values.nginx.port }}

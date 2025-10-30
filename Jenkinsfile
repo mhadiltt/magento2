@@ -56,8 +56,8 @@ spec:
         IMAGE_TAG = "${env.BUILD_NUMBER}"
         PHP_IMAGE_REPO = "hadil01/magento2-php"
         NGINX_IMAGE_REPO = "hadil01/magento2-nginx"
-        DOCKERHUB_CREDS = 'dockerhub-pass'          // ✅ DockerHub credentials ID
-        ARGOCD_CREDS = 'argocd-jenkins-creds'       // ✅ Updated to your actual ArgoCD credential ID
+        DOCKERHUB_CREDS = 'dockerhub-pass'
+        ARGOCD_CREDS = 'argocd-jenkins-creds'
         ARGOCD_SERVER = "argocd-server.argocd.svc.cluster.local:443"
         ARGOCD_APP_NAME = "magento2"
     }
@@ -90,7 +90,7 @@ spec:
                     sh '''
                         set -e
                         echo "🐘 Building PHP Image: $PHP_IMAGE_REPO:$IMAGE_TAG ..."
-                        docker build -t $PHP_IMAGE_REPO:$IMAGE_TAG -f Dockerfile.php .
+                        docker build -t $PHP_IMAGE_REPO:$IMAGE_TAG -f docker/php/Dockerfile.php .
                         docker push $PHP_IMAGE_REPO:$IMAGE_TAG
                     '''
                 }
@@ -103,7 +103,7 @@ spec:
                     sh '''
                         set -e
                         echo "🌐 Building NGINX Image: $NGINX_IMAGE_REPO:$IMAGE_TAG ..."
-                        docker build -t $NGINX_IMAGE_REPO:$IMAGE_TAG -f Dockerfile.nginx .
+                        docker build -t $NGINX_IMAGE_REPO:$IMAGE_TAG -f docker/nginx/Dockerfile.nginx .
                         docker push $NGINX_IMAGE_REPO:$IMAGE_TAG
                     '''
                 }

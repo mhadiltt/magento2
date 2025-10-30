@@ -54,12 +54,12 @@ spec:
 
     environment {
         IMAGE_TAG = "${env.BUILD_NUMBER}"
-        PHP_IMAGE_REPO = "hadil01/magento-pipe-php"
-        NGINX_IMAGE_REPO = "hadil01/magento-pipe-nginx"
+        PHP_IMAGE_REPO = "hadil01/magento2-php"
+        NGINX_IMAGE_REPO = "hadil01/magento2-nginx"
         DOCKERHUB_CREDS = 'dockerhub-pass'          // ✅ DockerHub credentials ID
         ARGOCD_CREDS = 'argocd-jenkins-creds'       // ✅ Updated to your actual ArgoCD credential ID
         ARGOCD_SERVER = "argocd-server.argocd.svc.cluster.local:443"
-        ARGOCD_APP_NAME = "magento"
+        ARGOCD_APP_NAME = "magento2"
     }
 
     stages {

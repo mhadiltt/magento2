@@ -1,25 +1,58 @@
-# Use PHP 8.2 (Magento 2.4.7+ requires >=8.2)
+# ---- PHP build stage ----
 FROM php:8.2-fpm
 
-# Install system dependencies
+# Install system dependencies and PHP extensions
 RUN apt-get update && apt-get install -y \
-    libfreetype6-dev libjpeg62-turbo-dev libpng-dev libzip-dev libicu-dev libxml2-dev libonig-dev unzip git zip vim curl \
-    && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install bcmath gd intl pdo_mysql soap xml zip opcache
+    git \
+    unzip \
+    libxml2-dev \
+    libxslt-dev \
+    libzip-dev \
+    libpng-dev \
+    libjpeg-dev \
+    libfreetype6-dev \
+    libicu-dev \
+    libonig-dev \
+    libssl-dev \
+    libcurl4-openssl-dev \
+    libedit-dev \
+    libreadline-dev \
+    libsqlite3-dev \
+    libxslt1.1 \
+    && docker-php-ext-install \
+        bcmath \
+        gd \
+        intl \
+        opcache \
+        pdo_mysql \
+        soap \
+        sockets \
+        ftp \
+        xsl \
+        zip \
+    && docker-php-ext-enable \
+        bcmath gd intl opcache pdo_mysql soap sockets ftp xsl zip \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Install Composer globally
+# Copy Composer from official image
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 # Set working directory
 WORKDIR /var/www/html
 
-# Copy Magento source code
+# Copy application code
 COPY . .
 
-# Install Magento dependencies
+# Allow git access for composer
+RUN git config --global --add safe.directory /var/www/html
+
+# Install dependencies (production mode)
 RUN composer install --no-dev --optimize-autoloader
 
-# Set permissions for Magento directories
+# Set permissions
 RUN chown -R www-data:www-data /var/www/html && chmod -R 755 /var/www/html
+
+# Expose port for PHP-FPM
+EXPOSE 9000
 
 CMD ["php-fpm"]

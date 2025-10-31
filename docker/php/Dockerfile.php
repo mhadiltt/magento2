@@ -52,7 +52,10 @@ RUN composer install --no-dev --optimize-autoloader
 # Set permissions
 RUN chown -R www-data:www-data /var/www/html && chmod -R 755 /var/www/html
 
-# Expose port for PHP-FPM
+# ✅ FIX: Create PHP-FPM runtime dir and run in foreground
+RUN mkdir -p /run/php && chown -R www-data:www-data /run/php
+
 EXPOSE 9000
 
-CMD ["php-fpm"]
+# ✅ Permanent fix — PHP-FPM must run in foreground mode
+CMD ["php-fpm", "-F"]

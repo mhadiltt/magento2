@@ -1,0 +1,13 @@
+php:
+  image:
+    repository: hadil01/pipe-php
+    tag: "latest"
+  replicas: 1
+  port: 9000
+
+nginx:
+  image:
+    repository: hadil01/pipe-nginx
+    tag: "latest"
+  replicas: 1
+  port: 80

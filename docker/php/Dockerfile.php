@@ -1,7 +1,7 @@
 # =========================================
-# PHP-FPM image for Magento 2.4.6 (PHP 8.3)
+# PHP-FPM image for Magento 2.4.6 (PHP 8.2)
 # =========================================
-FROM php:8.3-fpm
+FROM php:8.2-fpm
 
 # Install required system dependencies and PHP extensions
 RUN apt-get update && apt-get install -y \
@@ -40,7 +40,7 @@ RUN curl -sS https://getcomposer.org/installer | php && \
 # Copy composer files first (for caching)
 COPY composer.json composer.lock ./
 
-# Install Magento dependencies
+# Install Magento dependencies (ignore minor platform warnings)
 RUN composer install --no-dev --prefer-dist --no-progress --no-interaction --optimize-autoloader
 
 # Copy the rest of the application code

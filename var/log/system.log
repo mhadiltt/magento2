@@ -1,0 +1,99 @@
+[2025-10-31T13:19:25.789366+00:00] main.ERROR: No arguments expected for "setup:install" command, got "pipe".
+#0 /home/cloud/pipe/vendor/symfony/console/Input/ArgvInput.php(86): Symfony\Component\Console\Input\ArgvInput->parseArgument()
+#1 /home/cloud/pipe/vendor/symfony/console/Input/ArgvInput.php(71): Symfony\Component\Console\Input\ArgvInput->parseToken()
+#2 /home/cloud/pipe/vendor/symfony/console/Input/Input.php(55): Symfony\Component\Console\Input\ArgvInput->parse()
+#3 /home/cloud/pipe/vendor/symfony/console/Command/Command.php(257): Symfony\Component\Console\Input\Input->bind()
+#4 /home/cloud/pipe/vendor/symfony/console/Application.php(1040): Symfony\Component\Console\Command\Command->run()
+#5 /home/cloud/pipe/vendor/symfony/console/Application.php(301): Symfony\Component\Console\Application->doRunCommand()
+#6 /home/cloud/pipe/vendor/magento/framework/Console/Cli.php(116): Symfony\Component\Console\Application->doRun()
+#7 /home/cloud/pipe/vendor/symfony/console/Application.php(171): Magento\Framework\Console\Cli->doRun()
+#8 /home/cloud/pipe/bin/magento(23): Symfony\Component\Console\Application->run()
+#9 {main} [] []
+[2025-10-31T13:20:16.451133+00:00] main.ERROR: No arguments expected for "setup:install" command, got "pipe".
+#0 /home/cloud/pipe/vendor/symfony/console/Input/ArgvInput.php(86): Symfony\Component\Console\Input\ArgvInput->parseArgument()
+#1 /home/cloud/pipe/vendor/symfony/console/Input/ArgvInput.php(71): Symfony\Component\Console\Input\ArgvInput->parseToken()
+#2 /home/cloud/pipe/vendor/symfony/console/Input/Input.php(55): Symfony\Component\Console\Input\ArgvInput->parse()
+#3 /home/cloud/pipe/vendor/symfony/console/Command/Command.php(257): Symfony\Component\Console\Input\Input->bind()
+#4 /home/cloud/pipe/vendor/symfony/console/Application.php(1040): Symfony\Component\Console\Command\Command->run()
+#5 /home/cloud/pipe/vendor/symfony/console/Application.php(301): Symfony\Component\Console\Application->doRunCommand()
+#6 /home/cloud/pipe/vendor/magento/framework/Console/Cli.php(116): Symfony\Component\Console\Application->doRun()
+#7 /home/cloud/pipe/vendor/symfony/console/Application.php(171): Magento\Framework\Console\Cli->doRun()
+#8 /home/cloud/pipe/bin/magento(23): Symfony\Component\Console\Application->run()
+#9 {main} [] []
+[2025-10-31T13:26:10.844763+00:00] main.ERROR: Parameter validation failed
+#0 /home/cloud/pipe/vendor/symfony/console/Command/Command.php(264): Magento\Setup\Console\Command\InstallCommand->initialize()
+#1 /home/cloud/pipe/vendor/symfony/console/Application.php(1040): Symfony\Component\Console\Command\Command->run()
+#2 /home/cloud/pipe/vendor/symfony/console/Application.php(301): Symfony\Component\Console\Application->doRunCommand()
+#3 /home/cloud/pipe/vendor/magento/framework/Console/Cli.php(116): Symfony\Component\Console\Application->doRun()
+#4 /home/cloud/pipe/vendor/symfony/console/Application.php(171): Magento\Framework\Console\Cli->doRun()
+#5 /home/cloud/pipe/bin/magento(23): Symfony\Component\Console\Application->run()
+#6 {main} [] []
+[2025-10-31T13:37:56.243129+00:00] main.ERROR: Parameter validation failed
+#0 /home/cloud/pipe/vendor/symfony/console/Command/Command.php(264): Magento\Setup\Console\Command\InstallCommand->initialize()
+#1 /home/cloud/pipe/vendor/symfony/console/Application.php(1040): Symfony\Component\Console\Command\Command->run()
+#2 /home/cloud/pipe/vendor/symfony/console/Application.php(301): Symfony\Component\Console\Application->doRunCommand()
+#3 /home/cloud/pipe/vendor/magento/framework/Console/Cli.php(116): Symfony\Component\Console\Application->doRun()
+#4 /home/cloud/pipe/vendor/symfony/console/Application.php(171): Magento\Framework\Console\Cli->doRun()
+#5 /home/cloud/pipe/bin/magento(23): Symfony\Component\Console\Application->run()
+#6 {main} [] []
+[2025-11-03T05:57:47.685629+00:00] main.INFO: Broken reference: the 'catalog.compare.sidebar' element cannot be added as child to 'sidebar.additional', because the latter doesn't exist [] []
+[2025-11-03T05:57:47.688618+00:00] main.INFO: Broken reference: the 'sale.reorder.sidebar' element cannot be added as child to 'sidebar.additional', because the latter doesn't exist [] []
+[2025-11-03T05:57:47.690416+00:00] main.INFO: Broken reference: the 'wishlist_sidebar' element cannot be added as child to 'sidebar.additional', because the latter doesn't exist [] []
+[2025-11-03T05:57:47.692304+00:00] main.INFO: Broken reference: the 'paypal.partner.right.logo' element cannot be added as child to 'sidebar.additional', because the latter doesn't exist [] []
+[2025-11-03T05:57:47.693814+00:00] main.INFO: Broken reference: the 'bml.right.logo' element cannot be added as child to 'sidebar.additional', because the latter doesn't exist [] []
+[2025-11-03T05:57:47.695120+00:00] main.INFO: Broken reference: the 'sidebar.container.paylater' element cannot be added as child to 'sidebar.additional', because the latter doesn't exist [] []
+[2025-11-03T06:07:02.166552+00:00] main.INFO: Broken reference: the 'catalog.compare.sidebar' element cannot be added as child to 'sidebar.additional', because the latter doesn't exist [] []
+[2025-11-03T06:07:02.169757+00:00] main.INFO: Broken reference: the 'sale.reorder.sidebar' element cannot be added as child to 'sidebar.additional', because the latter doesn't exist [] []
+[2025-11-03T06:07:02.176222+00:00] main.INFO: Broken reference: the 'wishlist_sidebar' element cannot be added as child to 'sidebar.additional', because the latter doesn't exist [] []
+[2025-11-03T06:07:02.179009+00:00] main.INFO: Broken reference: the 'paypal.partner.right.logo' element cannot be added as child to 'sidebar.additional', because the latter doesn't exist [] []
+[2025-11-03T06:07:02.181436+00:00] main.INFO: Broken reference: the 'bml.right.logo' element cannot be added as child to 'sidebar.additional', because the latter doesn't exist [] []
+[2025-11-03T06:07:02.183903+00:00] main.INFO: Broken reference: the 'sidebar.container.paylater' element cannot be added as child to 'sidebar.additional', because the latter doesn't exist [] []
+[2025-11-03T06:11:48.659555+00:00] main.INFO: Broken reference: the 'catalog.compare.sidebar' element cannot be added as child to 'sidebar.additional', because the latter doesn't exist [] []
+[2025-11-03T06:11:48.663591+00:00] main.INFO: Broken reference: the 'sale.reorder.sidebar' element cannot be added as child to 'sidebar.additional', because the latter doesn't exist [] []
+[2025-11-03T06:11:48.673983+00:00] main.INFO: Broken reference: the 'wishlist_sidebar' element cannot be added as child to 'sidebar.additional', because the latter doesn't exist [] []
+[2025-11-03T06:11:48.678036+00:00] main.INFO: Broken reference: the 'paypal.partner.right.logo' element cannot be added as child to 'sidebar.additional', because the latter doesn't exist [] []
+[2025-11-03T06:11:48.681359+00:00] main.INFO: Broken reference: the 'bml.right.logo' element cannot be added as child to 'sidebar.additional', because the latter doesn't exist [] []
+[2025-11-03T06:11:48.686435+00:00] main.INFO: Broken reference: the 'sidebar.container.paylater' element cannot be added as child to 'sidebar.additional', because the latter doesn't exist [] []
+[2025-11-03T06:11:50.136980+00:00] main.INFO: Broken reference: the 'catalog.compare.sidebar' element cannot be added as child to 'sidebar.additional', because the latter doesn't exist [] []
+[2025-11-03T06:11:50.140198+00:00] main.INFO: Broken reference: the 'sale.reorder.sidebar' element cannot be added as child to 'sidebar.additional', because the latter doesn't exist [] []
+[2025-11-03T06:11:50.143077+00:00] main.INFO: Broken reference: the 'wishlist_sidebar' element cannot be added as child to 'sidebar.additional', because the latter doesn't exist [] []
+[2025-11-03T06:11:50.145689+00:00] main.INFO: Broken reference: the 'paypal.partner.right.logo' element cannot be added as child to 'sidebar.additional', because the latter doesn't exist [] []
+[2025-11-03T06:11:50.148027+00:00] main.INFO: Broken reference: the 'bml.right.logo' element cannot be added as child to 'sidebar.additional', because the latter doesn't exist [] []
+[2025-11-03T06:11:50.150357+00:00] main.INFO: Broken reference: the 'sidebar.container.paylater' element cannot be added as child to 'sidebar.additional', because the latter doesn't exist [] []
+[2025-11-03T06:11:50.930163+00:00] main.INFO: Broken reference: the 'catalog.compare.sidebar' element cannot be added as child to 'sidebar.additional', because the latter doesn't exist [] []
+[2025-11-03T06:11:50.939320+00:00] main.INFO: Broken reference: the 'sale.reorder.sidebar' element cannot be added as child to 'sidebar.additional', because the latter doesn't exist [] []
+[2025-11-03T06:11:50.942090+00:00] main.INFO: Broken reference: the 'wishlist_sidebar' element cannot be added as child to 'sidebar.additional', because the latter doesn't exist [] []
+[2025-11-03T06:11:50.944683+00:00] main.INFO: Broken reference: the 'paypal.partner.right.logo' element cannot be added as child to 'sidebar.additional', because the latter doesn't exist [] []
+[2025-11-03T06:11:50.954021+00:00] main.INFO: Broken reference: the 'bml.right.logo' element cannot be added as child to 'sidebar.additional', because the latter doesn't exist [] []
+[2025-11-03T06:11:50.970465+00:00] main.INFO: Broken reference: the 'sidebar.container.paylater' element cannot be added as child to 'sidebar.additional', because the latter doesn't exist [] []
+[2025-11-03T06:12:37.862464+00:00] main.INFO: Broken reference: the 'catalog.compare.sidebar' element cannot be added as child to 'sidebar.additional', because the latter doesn't exist [] []
+[2025-11-03T06:12:37.864698+00:00] main.INFO: Broken reference: the 'sale.reorder.sidebar' element cannot be added as child to 'sidebar.additional', because the latter doesn't exist [] []
+[2025-11-03T06:12:37.867634+00:00] main.INFO: Broken reference: the 'wishlist_sidebar' element cannot be added as child to 'sidebar.additional', because the latter doesn't exist [] []
+[2025-11-03T06:12:37.869656+00:00] main.INFO: Broken reference: the 'paypal.partner.right.logo' element cannot be added as child to 'sidebar.additional', because the latter doesn't exist [] []
+[2025-11-03T06:12:37.872137+00:00] main.INFO: Broken reference: the 'bml.right.logo' element cannot be added as child to 'sidebar.additional', because the latter doesn't exist [] []
+[2025-11-03T06:12:37.874329+00:00] main.INFO: Broken reference: the 'sidebar.container.paylater' element cannot be added as child to 'sidebar.additional', because the latter doesn't exist [] []
+[2025-11-03T06:16:03.750411+00:00] main.INFO: Broken reference: the 'catalog.compare.sidebar' element cannot be added as child to 'sidebar.additional', because the latter doesn't exist [] []
+[2025-11-03T06:16:03.754477+00:00] main.INFO: Broken reference: the 'sale.reorder.sidebar' element cannot be added as child to 'sidebar.additional', because the latter doesn't exist [] []
+[2025-11-03T06:16:03.757594+00:00] main.INFO: Broken reference: the 'wishlist_sidebar' element cannot be added as child to 'sidebar.additional', because the latter doesn't exist [] []
+[2025-11-03T06:16:03.760389+00:00] main.INFO: Broken reference: the 'paypal.partner.right.logo' element cannot be added as child to 'sidebar.additional', because the latter doesn't exist [] []
+[2025-11-03T06:16:03.763159+00:00] main.INFO: Broken reference: the 'bml.right.logo' element cannot be added as child to 'sidebar.additional', because the latter doesn't exist [] []
+[2025-11-03T06:16:03.765760+00:00] main.INFO: Broken reference: the 'sidebar.container.paylater' element cannot be added as child to 'sidebar.additional', because the latter doesn't exist [] []
+[2025-11-03T06:16:42.839888+00:00] main.ERROR: There are no commands defined in the "show" namespace.
+#0 /home/cloud/pipe/vendor/symfony/console/Application.php(701): Symfony\Component\Console\Application->findNamespace()
+#1 /home/cloud/pipe/vendor/symfony/console/Application.php(259): Symfony\Component\Console\Application->find()
+#2 /home/cloud/pipe/vendor/magento/framework/Console/Cli.php(116): Symfony\Component\Console\Application->doRun()
+#3 /home/cloud/pipe/vendor/symfony/console/Application.php(171): Magento\Framework\Console\Cli->doRun()
+#4 /home/cloud/pipe/bin/magento(23): Symfony\Component\Console\Application->run()
+#5 {main} [] []
+[2025-11-03T06:22:24.102166+00:00] main.INFO: Broken reference: the 'catalog.compare.sidebar' element cannot be added as child to 'sidebar.additional', because the latter doesn't exist [] []
+[2025-11-03T06:22:24.104655+00:00] main.INFO: Broken reference: the 'sale.reorder.sidebar' element cannot be added as child to 'sidebar.additional', because the latter doesn't exist [] []
+[2025-11-03T06:22:24.106425+00:00] main.INFO: Broken reference: the 'wishlist_sidebar' element cannot be added as child to 'sidebar.additional', because the latter doesn't exist [] []
+[2025-11-03T06:22:24.107717+00:00] main.INFO: Broken reference: the 'paypal.partner.right.logo' element cannot be added as child to 'sidebar.additional', because the latter doesn't exist [] []
+[2025-11-03T06:22:24.108781+00:00] main.INFO: Broken reference: the 'bml.right.logo' element cannot be added as child to 'sidebar.additional', because the latter doesn't exist [] []
+[2025-11-03T06:22:24.109846+00:00] main.INFO: Broken reference: the 'sidebar.container.paylater' element cannot be added as child to 'sidebar.additional', because the latter doesn't exist [] []
+[2025-11-03T06:37:59.927801+00:00] main.INFO: Broken reference: the 'catalog.compare.sidebar' element cannot be added as child to 'sidebar.additional', because the latter doesn't exist [] []
+[2025-11-03T06:37:59.929700+00:00] main.INFO: Broken reference: the 'sale.reorder.sidebar' element cannot be added as child to 'sidebar.additional', because the latter doesn't exist [] []
+[2025-11-03T06:37:59.931060+00:00] main.INFO: Broken reference: the 'wishlist_sidebar' element cannot be added as child to 'sidebar.additional', because the latter doesn't exist [] []
+[2025-11-03T06:37:59.932289+00:00] main.INFO: Broken reference: the 'paypal.partner.right.logo' element cannot be added as child to 'sidebar.additional', because the latter doesn't exist [] []
+[2025-11-03T06:37:59.933353+00:00] main.INFO: Broken reference: the 'bml.right.logo' element cannot be added as child to 'sidebar.additional', because the latter doesn't exist [] []
+[2025-11-03T06:37:59.934453+00:00] main.INFO: Broken reference: the 'sidebar.container.paylater' element cannot be added as child to 'sidebar.additional', because the latter doesn't exist [] []

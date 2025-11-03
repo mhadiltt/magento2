@@ -40,6 +40,9 @@ RUN curl -sS https://getcomposer.org/installer | php && \
 # Copy composer files first (for caching)
 COPY composer.json composer.lock ./
 
+# Configure Magento repo authentication (local secure setup)
+RUN composer config --global http-basic.repo.magento.com 54785d5375de432d919d46b25db931e3 1bea1de9d3a1a9f0ee11fd3d9d508729
+
 # Install Magento dependencies (ignore minor platform warnings)
 RUN composer install --no-dev --prefer-dist --no-progress --no-interaction --optimize-autoloader
 

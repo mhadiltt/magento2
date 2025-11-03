@@ -1,9 +1,9 @@
-# ========================
-# PHP-FPM Stage for Magento
-# ========================
-FROM php:8.1-fpm
+# =========================================
+# PHP-FPM image for Magento 2.4.6 (PHP 8.3)
+# =========================================
+FROM php:8.3-fpm
 
-# Install required system dependencies
+# Install required system dependencies and PHP extensions
 RUN apt-get update && apt-get install -y \
     git \
     unzip \
@@ -33,20 +33,23 @@ RUN apt-get update && apt-get install -y \
 # Set working directory
 WORKDIR /var/www/html
 
-# Copy composer and install dependencies
-COPY composer.json composer.lock ./
+# Install Composer globally
 RUN curl -sS https://getcomposer.org/installer | php && \
     mv composer.phar /usr/local/bin/composer
+
+# Copy composer files first (for caching)
+COPY composer.json composer.lock ./
 
 # Install Magento dependencies
 RUN composer install --no-dev --prefer-dist --no-progress --no-interaction --optimize-autoloader
 
-# Copy the rest of the Magento files
+# Copy the rest of the application code
 COPY . .
 
-# Set proper permissions
+# Set proper file permissions
 RUN chown -R www-data:www-data /var/www/html && \
     chmod -R 755 /var/www/html
 
 EXPOSE 9000
+
 CMD ["php-fpm"]

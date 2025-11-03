@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: magento-nginx
-  namespace: magento2
+  namespace: pipe
   labels:
     app: magento-nginx
 spec:

@@ -11,3 +11,15 @@ nginx:
     tag: "latest"
   replicas: 1
   port: 80
+
+db:
+  image:
+    repository: mysql
+    tag: "8.0"
+  env:
+    MYSQL_ROOT_PASSWORD: root
+    MYSQL_DATABASE: pipe
+    MYSQL_USER: pipe
+    MYSQL_PASSWORD: 1234
+  storage:
+    size: 1Gi

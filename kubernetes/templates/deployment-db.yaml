@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: magento-db
+  labels:
+    app: magento-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: magento-db
+  template:
+    metadata:
+      labels:
+        app: magento-db
+    spec:
+      containers:
+        - name: magento-db
+          image: "{{ .Values.db.image.repository }}:{{ .Values.db.image.tag }}"
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: "{{ .Values.db.env.MYSQL_ROOT_PASSWORD }}"
+            - name: MYSQL_DATABASE
+              value: "{{ .Values.db.env.MYSQL_DATABASE }}"
+            - name: MYSQL_USER
+              value: "{{ .Values.db.env.MYSQL_USER }}"
+            - name: MYSQL_PASSWORD
+              value: "{{ .Values.db.env.MYSQL_PASSWORD }}"
+          ports:
+            - containerPort: 3306
+          volumeMounts:
+            - name: db-storage
+              mountPath: /var/lib/mysql
+      volumes:
+        - name: db-storage
+          persistentVolumeClaim:
+            claimName: magento-db-pvc
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: magento-db-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: "{{ .Values.db.storage.size }}"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: magento-db
+spec:
+  selector:
+    app: magento-db
+  ports:
+    - name: mysql
+      port: 3306
+      targetPort: 3306

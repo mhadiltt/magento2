@@ -1,23 +1,17 @@
-# Use official Nginx base image
-
 FROM nginx:1.24-alpine
-
-# Set working directory
 
 WORKDIR /var/www/html
 
-# Copy Nginx configuration
-
+# Copy only the nginx server config we control
 COPY docker/nginx/default.conf /etc/nginx/conf.d/default.conf
 
-# Copy Magento source code into container
+# Copy the Magento nginx sample into the image path expected by default.conf
+COPY nginx.conf.sample /var/www/html/nginx.conf.sample
 
-COPY . /var/www/html/
-
-# Expose port 80
+# Create log dir & set permissions (use nginx user)
+RUN mkdir -p /var/log/nginx && \
+    chown -R nginx:nginx /var/www/html /var/log/nginx
 
 EXPOSE 80
-
-# Start Nginx in foreground
 
 CMD ["nginx", "-g", "daemon off;"]

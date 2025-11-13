@@ -1,4 +1,3 @@
-#new
 pipeline {
     agent {
         kubernetes {

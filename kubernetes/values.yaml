@@ -14,8 +14,8 @@ nginx:
 
 db:
   image:
-    repository: mysql
-    tag: "5.7"           # FIXED — required for Magento 2.4.6 (8.0 breaks)
+    repository: hadil01/pipe-db
+    tag: "latest"         
   env:
     MYSQL_ROOT_PASSWORD: root
     MYSQL_DATABASE: pipe

@@ -1,9 +1,9 @@
-# =========================================
-# PHP-FPM image for Magento 2.4.6 (PHP 8.2)
-# =========================================
+# ==============================================
+# PHP-FPM 8.2 for Magento 2.4.6 (Stable Build)
+# ==============================================
 FROM php:8.2-fpm
 
-# Install required system dependencies and PHP extensions
+# Install OS dependencies
 RUN apt-get update && apt-get install -y \
     git \
     unzip \
@@ -13,10 +13,9 @@ RUN apt-get update && apt-get install -y \
     libpng-dev \
     libjpeg-dev \
     libfreetype6-dev \
-    libonig-dev \
     libicu-dev \
+    libonig-dev \
     libssl-dev \
-    libmcrypt-dev \
     libreadline-dev \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install \
@@ -30,28 +29,34 @@ RUN apt-get update && apt-get install -y \
         zip \
     && rm -rf /var/lib/apt/lists/*
 
+# ----------------------------------------------
+# Install Composer (Safe & Permanent Method)
+# ----------------------------------------------
+COPY --from=composer:2 /usr/bin/composer /usr/local/bin/composer
+
 # Set working directory
 WORKDIR /var/www/html
 
-# Install Composer globally
-RUN curl -sS https://getcomposer.org/installer | php && \
-    mv composer.phar /usr/local/bin/composer
-
-# Copy composer files first (for caching)
+# Copy composer files first (cache layer)
 COPY composer.json composer.lock ./
 
-# Configure Magento repo authentication (local secure setup)
-RUN composer config --global http-basic.repo.magento.com 54785d5375de432d919d46b25db931e3 1bea1de9d3a1a9f0ee11fd3d9d508729
+# ----------------------------------------------
+# Magento repo auth (Your keys added below)
+# ----------------------------------------------
+RUN composer config --global http-basic.repo.magento.com \
+    54785d5375de432d919d46b25db931e3 \
+    1bea1de9d3a1a9f0ee11fd3d9d508729
 
-# Install Magento dependencies (ignore minor platform warnings)
-RUN composer install --no-dev --prefer-dist --no-progress --no-interaction --optimize-autoloader
+# Install Magento dependencies
+RUN composer install --no-dev --prefer-dist --no-interaction --optimize-autoloader
 
-# Copy the rest of the application code
+# Copy full source code
 COPY . .
 
-# Set proper file permissions
+# Fix permissions (very important for var/pub/generated)
 RUN chown -R www-data:www-data /var/www/html && \
-    chmod -R 755 /var/www/html
+    chmod -R 755 /var/www/html && \
+    chmod -R 777 var pub generated
 
 EXPOSE 9000
 

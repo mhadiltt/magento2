@@ -33,22 +33,23 @@ RUN apt-get update && apt-get install -y \
 # Set working directory
 WORKDIR /var/www/html
 
-# Install Composer globally (mirror + retry logic)
-RUN curl -fsSL https://raw.githubusercontent.com/composer/getcomposer.org/main/web/installer -o composer-setup.php \
-    && php composer-setup.php \
-    && mv composer.phar /usr/local/bin/composer \
+# -----------------------------------------
+# SAFE & RELIABLE COMPOSER INSTALLER
+# (Fixes zlib error + GitHub download issue)
+# -----------------------------------------
+RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
+    && php composer-setup.php --install-dir=/usr/local/bin --filename=composer \
     && rm composer-setup.php
 
-# Copy composer manifests first for build caching
+# Copy composer manifests first (for build caching)
 COPY composer.json composer.lock ./
 
-# Configure Magento authentication securely
-# (Replace keys before use)
+# Configure Magento repo authentication (replace with your own keys)
 RUN composer config --global http-basic.repo.magento.com \
     54785d5375de432d919d46b25db931e3 \
     1bea1de9d3a1a9f0ee11fd3d9d508729
 
-# Install PHP dependencies (Magento vendor)
+# Install Magento PHP dependencies
 RUN composer install \
     --no-dev \
     --prefer-dist \
@@ -56,10 +57,10 @@ RUN composer install \
     --no-interaction \
     --optimize-autoloader
 
-# Copy project files
+# Copy full Magento project files
 COPY . .
 
-# Permissions for Magento
+# Magento permissions
 RUN chown -R www-data:www-data /var/www/html && \
     find var generated vendor pub/static pub/media app/etc -type f -exec chmod 644 {} \; && \
     find var generated vendor pub/static pub/media app/etc -type d -exec chmod 755 {} \;

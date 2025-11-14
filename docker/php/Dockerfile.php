@@ -1,9 +1,9 @@
-# ==============================================
-# PHP-FPM 8.2 for Magento 2.4.6 (Stable Build)
-# ==============================================
+# =========================================
+# PHP-FPM image for Magento 2.4.6 (PHP 8.2)
+# =========================================
 FROM php:8.2-fpm
 
-# Install OS dependencies
+# Install required system dependencies and PHP extensions
 RUN apt-get update && apt-get install -y \
     git \
     unzip \
@@ -13,9 +13,10 @@ RUN apt-get update && apt-get install -y \
     libpng-dev \
     libjpeg-dev \
     libfreetype6-dev \
-    libicu-dev \
     libonig-dev \
+    libicu-dev \
     libssl-dev \
+    libmcrypt-dev \
     libreadline-dev \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install \
@@ -29,32 +30,28 @@ RUN apt-get update && apt-get install -y \
         zip \
     && rm -rf /var/lib/apt/lists/*
 
-# ----------------------------------------------
-# Install Composer (Safe & Permanent Method)
-# ----------------------------------------------
-COPY --from=composer:2 /usr/bin/composer /usr/local/bin/composer
-
 # Set working directory
 WORKDIR /var/www/html
 
-# Copy composer files first (cache layer)
+# Install Composer globally
+RUN curl -sS https://getcomposer.org/installer | php && \
+    mv composer.phar /usr/local/bin/composer
+
+# Copy composer files first (for caching)
 COPY composer.json composer.lock ./
 
-# Magento repo auth (you can replace your keys)
-RUN composer config --global http-basic.repo.magento.com \
-    YOUR_PUBLIC_KEY_HERE \
-    YOUR_PRIVATE_KEY_HERE
+# Configure Magento repo authentication (local secure setup)
+RUN composer config --global http-basic.repo.magento.com 54785d5375de432d919d46b25db931e3 1bea1de9d3a1a9f0ee11fd3d9d508729
 
-# Install Magento dependencies
-RUN composer install --no-dev --prefer-dist --no-interaction --optimize-autoloader
+# Install Magento dependencies (ignore minor platform warnings)
+RUN composer install --no-dev --prefer-dist --no-progress --no-interaction --optimize-autoloader
 
-# Copy full source code
+# Copy the rest of the application code
 COPY . .
 
-# Fix permissions (very important for var/pub/generated)
+# Set proper file permissions
 RUN chown -R www-data:www-data /var/www/html && \
-    chmod -R 755 /var/www/html && \
-    chmod -R 777 var pub generated
+    chmod -R 755 /var/www/html
 
 EXPOSE 9000
 

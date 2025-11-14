@@ -1,70 +1,35 @@
-# =========================================
-# PHP-FPM image for Magento 2.4.6 (PHP 8.2)
-# =========================================
 FROM php:8.2-fpm
 
-# Install system dependencies & PHP extensions
 RUN apt-get update && apt-get install -y \
-    git \
-    unzip \
-    curl \
-    libxml2-dev \
-    libxslt1-dev \
-    libzip-dev \
-    libpng-dev \
-    libjpeg-dev \
-    libfreetype6-dev \
-    libonig-dev \
-    libicu-dev \
-    libssl-dev \
-    libreadline-dev \
+    git unzip curl \
+    libxml2-dev libxslt1-dev libzip-dev \
+    libpng-dev libjpeg-dev libfreetype6-dev \
+    libonig-dev libicu-dev libssl-dev libreadline-dev \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install \
-        bcmath \
-        gd \
-        intl \
-        pdo_mysql \
-        soap \
-        sockets \
-        xsl \
-        zip \
+         bcmath gd intl pdo_mysql soap sockets xsl zip \
     && rm -rf /var/lib/apt/lists/*
 
-# Set working directory
 WORKDIR /var/www/html
 
-# -----------------------------------------
-# SAFE & RELIABLE COMPOSER INSTALLER
-# (Fixes zlib error + GitHub download issue)
-# -----------------------------------------
-RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
-    && php composer-setup.php --install-dir=/usr/local/bin --filename=composer \
-    && rm composer-setup.php
+COPY --from=composer:2 /usr/bin/composer /usr/local/bin/composer
 
-# Copy composer manifests first (for build caching)
+# Copy composer manifests
 COPY composer.json composer.lock ./
 
-# Configure Magento repo authentication (replace with your own keys)
+# Magento repo keys
 RUN composer config --global http-basic.repo.magento.com \
     54785d5375de432d919d46b25db931e3 \
     1bea1de9d3a1a9f0ee11fd3d9d508729
 
-# Install Magento PHP dependencies
 RUN composer install \
-    --no-dev \
-    --prefer-dist \
-    --no-progress \
-    --no-interaction \
-    --optimize-autoloader
+    --no-dev --prefer-dist --no-progress --no-interaction --optimize-autoloader
 
-# Copy full Magento project files
 COPY . .
 
-# Magento permissions
 RUN chown -R www-data:www-data /var/www/html && \
     find var generated vendor pub/static pub/media app/etc -type f -exec chmod 644 {} \; && \
     find var generated vendor pub/static pub/media app/etc -type d -exec chmod 755 {} \;
 
 EXPOSE 9000
-
 CMD ["php-fpm"]

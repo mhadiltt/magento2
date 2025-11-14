@@ -109,3 +109,7 @@
 [2025-11-13T10:53:37.462244+00:00] main.INFO: Broken reference: the 'paypal.partner.right.logo' element cannot be added as child to 'sidebar.additional', because the latter doesn't exist [] []
 [2025-11-13T10:53:37.463507+00:00] main.INFO: Broken reference: the 'bml.right.logo' element cannot be added as child to 'sidebar.additional', because the latter doesn't exist [] []
 [2025-11-13T10:53:37.464690+00:00] main.INFO: Broken reference: the 'sidebar.container.paylater' element cannot be added as child to 'sidebar.additional', because the latter doesn't exist [] []
+[2025-11-14T04:21:16.165949+00:00] main.ERROR: SQLSTATE[HY000] [2002] php_network_getaddresses: getaddrinfo for magento-db failed: Temporary failure in name resolution [] []
+[2025-11-14T04:21:16.307775+00:00] main.ERROR: SQLSTATE[HY000] [2002] php_network_getaddresses: getaddrinfo for magento-db failed: Temporary failure in name resolution [] []
+[2025-11-14T04:21:16.361313+00:00] main.ERROR: SQLSTATE[HY000] [2002] php_network_getaddresses: getaddrinfo for magento-db failed: Temporary failure in name resolution [] []
+[2025-11-14T04:21:16.475729+00:00] main.ERROR: SQLSTATE[HY000] [2002] php_network_getaddresses: getaddrinfo for magento-db failed: Temporary failure in name resolution [] []

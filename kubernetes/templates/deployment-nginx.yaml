@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: magento-nginx
-  namespace: {{ .Values.namespace }}
+  namespace: magento2
   labels:
     app: magento-nginx
 spec:
@@ -20,10 +20,3 @@ spec:
           image: "{{ .Values.nginx.image.repository }}:{{ .Values.nginx.image.tag }}"
           ports:
             - containerPort: {{ .Values.nginx.port }}
-          volumeMounts:
-            - name: magento-shared
-              mountPath: /var/www/html
-      volumes:
-        - name: magento-shared
-          persistentVolumeClaim:
-            claimName: magento-shared-pvc

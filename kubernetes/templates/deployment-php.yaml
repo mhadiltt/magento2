@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: magento-php
-  namespace: magento2
+  namespace: {{ .Values.namespace }}
   labels:
     app: magento-php
 spec:
@@ -20,3 +20,10 @@ spec:
           image: "{{ .Values.php.image.repository }}:{{ .Values.php.image.tag }}"
           ports:
             - containerPort: {{ .Values.php.port }}
+          volumeMounts:
+            - name: magento-shared
+              mountPath: /var/www/html
+      volumes:
+        - name: magento-shared
+          persistentVolumeClaim:
+            claimName: magento-shared-pvc

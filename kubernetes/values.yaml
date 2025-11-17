@@ -1,5 +1,8 @@
 namespace: magento2
 
+sharedStorage:
+  size: 2Gi   
+
 php:
   image:
     repository: hadil01/pipe-php

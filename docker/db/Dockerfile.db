@@ -7,9 +7,8 @@ ENV MYSQL_DATABASE=pipe
 ENV MYSQL_USER=pipe
 ENV MYSQL_PASSWORD=1234
 
-# Copy initialization SQL scripts if needed
-# COPY ./init.sql /docker-entrypoint-initdb.d/
+# Copy the initial Magento DB dump
+COPY ./docker/db/init.sql /docker-entrypoint-initdb.d/init.sql
 
 EXPOSE 3306
-
 CMD ["mysqld"]

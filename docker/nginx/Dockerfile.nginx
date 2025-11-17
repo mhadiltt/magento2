@@ -1,17 +1,12 @@
 FROM nginx:1.24-alpine
 
-# Set working directory
 WORKDIR /var/www/html
 
-# Copy NGINX config used by Kubernetes Service
+COPY . /var/www/html/
 COPY docker/nginx/default.conf /etc/nginx/conf.d/default.conf
-
-# Copy Magento’s nginx sample rules
 COPY nginx.conf.sample /var/www/html/nginx.conf.sample
 
-# Create required directories
-RUN mkdir -p /var/log/nginx && \
-    mkdir -p /var/www/html && \
+RUN mkdir -p /var/log/nginx /var/www/html && \
     chown -R nginx:nginx /var/www/html /var/log/nginx /etc/nginx/conf.d
 
 EXPOSE 80

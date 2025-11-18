@@ -5,7 +5,7 @@ metadata:
   namespace: magento2
 spec:
   accessModes:
-    - ReadWriteMany
+    - ReadWriteOnce  # <-- change from ReadWriteMany to ReadWriteOnce
   resources:
     requests:
       storage: 2Gi

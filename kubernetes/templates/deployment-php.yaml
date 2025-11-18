@@ -15,16 +15,8 @@ spec:
       labels:
         app: magento-php
     spec:
-      dnsPolicy: ClusterFirst
       containers:
         - name: php
           image: "{{ .Values.php.image.repository }}:{{ .Values.php.image.tag }}"
           ports:
             - containerPort: {{ .Values.php.port }}
-          volumeMounts:
-            - name: magento-shared-storage
-              mountPath: /var/www/html
-      volumes:
-        - name: magento-shared-storage
-          persistentVolumeClaim:
-            claimName: magento-shared-pvc

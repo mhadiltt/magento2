@@ -15,21 +15,8 @@ spec:
       labels:
         app: magento-nginx
     spec:
-      dnsPolicy: ClusterFirst
-      # wait for PHP before NGINX starts
-      initContainers:
-        - name: wait-for-php
-          image: busybox
-          command: ['sh', '-c', 'until nc -z magento-php 9000; do echo "waiting for php"; sleep 2; done']
       containers:
         - name: nginx
           image: "{{ .Values.nginx.image.repository }}:{{ .Values.nginx.image.tag }}"
           ports:
             - containerPort: {{ .Values.nginx.port }}
-          volumeMounts:
-            - name: magento-shared-storage
-              mountPath: /var/www/html
-      volumes:
-        - name: magento-shared-storage
-          persistentVolumeClaim:
-            claimName: magento-shared-pvc

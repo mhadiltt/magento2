@@ -30,7 +30,7 @@ return [
         'table_prefix' => '',
         'connection' => [
             'default' => [
-                'host' => 'magento-db',
+                'host' => 'magento-db.magento2.svc.cluster.local',
                 'dbname' => 'pipe',
                 'username' => 'pipe',
                 'password' => '1234',

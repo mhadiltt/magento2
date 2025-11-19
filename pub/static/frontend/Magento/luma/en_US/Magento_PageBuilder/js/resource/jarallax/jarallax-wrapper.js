@@ -1,12 +1,1 @@
-/**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
- */
-
-define([
-    'Magento_PageBuilder/js/resource/jarallax/jarallax'
-], function(jarallax){
-    'use strict';
-
-    window.jarallax = window.jarallax || jarallax;
-});
+/home/cloud/pipe/vendor/magento/module-page-builder/view/base/web/js/resource/jarallax/jarallax-wrapper.js

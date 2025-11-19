@@ -31,7 +31,7 @@ return [
         'connection' => [
             'default' => [
                 'host' => '192.168.68.136:30306',
-		'dbname' => 'pipe',
+                'dbname' => 'pipe',
                 'username' => 'pipe',
                 'password' => '1234',
                 'model' => 'mysql4',

@@ -1,0 +1,4 @@
+[mysqld]
+require_secure_transport=OFF
+ssl=0
+skip_ssl

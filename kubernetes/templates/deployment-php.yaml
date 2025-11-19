@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: magento-php
-  namespace: magento2
+  namespace: {{ .Values.namespace }}
   labels:
     app: magento-php
 spec:
@@ -18,5 +18,12 @@ spec:
       containers:
         - name: php
           image: "{{ .Values.php.image.repository }}:{{ .Values.php.image.tag }}"
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: {{ .Values.php.port }}
+              protocol: TCP
+          env:
+            - name: MYSQL_SSL_MODE
+              value: "DISABLED"
+            - name: MAGENTO_RUN_MODE
+              value: "developer"

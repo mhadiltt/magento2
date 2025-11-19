@@ -18,6 +18,10 @@ spec:
       containers:
         - name: magento-db
           image: "{{ .Values.db.image.repository }}:{{ .Values.db.image.tag }}"
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3306
+              protocol: TCP
           env:
             - name: MYSQL_ROOT_PASSWORD
               value: "{{ .Values.db.env.MYSQL_ROOT_PASSWORD }}"
@@ -27,17 +31,24 @@ spec:
               value: "{{ .Values.db.env.MYSQL_USER }}"
             - name: MYSQL_PASSWORD
               value: "{{ .Values.db.env.MYSQL_PASSWORD }}"
+            # Disable SSL completely in MySQL server
             - name: MYSQL_SSL_MODE
-              value: "{{ .Values.db.env.MYSQL_SSL_MODE }}"
-          ports:
-            - containerPort: 3306
+              value: "DISABLED"
           volumeMounts:
             - name: db-storage
               mountPath: /var/lib/mysql
+            - name: mysql-custom-config
+              mountPath: /etc/mysql/conf.d/mysql-custom.cnf
+              subPath: mysql-custom.cnf
       volumes:
         - name: db-storage
           persistentVolumeClaim:
             claimName: magento-db-pvc
+        - name: mysql-custom-config
+          configMap:
+            name: mysql-custom-config
+      restartPolicy: Always
+      dnsPolicy: ClusterFirst
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim

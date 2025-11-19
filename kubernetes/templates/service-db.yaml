@@ -6,9 +6,8 @@ metadata:
 spec:
   selector:
     app: magento-db
+  type: NodePort
   ports:
-    - name: mysql
-      protocol: TCP
-      port: 3306
+    - port: 3306
       targetPort: 3306
-  type: ClusterIP
+      nodePort: 30306   # optional, Kubernetes will assign if omitted

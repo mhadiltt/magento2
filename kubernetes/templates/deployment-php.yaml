@@ -41,13 +41,17 @@ spec:
               value: "DISABLED"
             - name: MAGENTO_RUN_MODE
               value: "developer"
-            - name: PHP_MEMORY_LIMIT
-              value: "2G"
           volumeMounts:
             - name: magento-code
               mountPath: /var/www/html
+            - name: php-memory-config
+              mountPath: /usr/local/etc/php/conf.d/php-memory.ini
+              subPath: php-memory.ini
       volumes:
         - name: magento-code
           hostPath:
             path: /home/cloud/pipe
             type: Directory
+        - name: php-memory-config
+          configMap:
+            name: php-memory-config

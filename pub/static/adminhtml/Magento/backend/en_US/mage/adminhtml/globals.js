@@ -1,1 +1,0 @@
-/home/cloud/pipe/lib/web/mage/adminhtml/globals.js

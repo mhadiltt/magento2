@@ -1,0 +1,7 @@
+
+# Magento generated files
+/pub/static/*
+!/pub/static/.htaccess
+/var/*
+!/var/.htaccess
+/generated/*

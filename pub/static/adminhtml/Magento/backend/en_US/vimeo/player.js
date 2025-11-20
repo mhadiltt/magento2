@@ -1,1 +1,0 @@
-/home/cloud/pipe/lib/web/vimeo/player.js

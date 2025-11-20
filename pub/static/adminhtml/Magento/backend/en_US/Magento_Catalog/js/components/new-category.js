@@ -1,1 +1,0 @@
-/home/cloud/pipe/vendor/magento/module-catalog/view/adminhtml/web/js/components/new-category.js

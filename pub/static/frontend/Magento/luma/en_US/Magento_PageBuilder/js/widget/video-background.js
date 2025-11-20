@@ -1,1 +1,0 @@
-/home/cloud/pipe/vendor/magento/module-page-builder/view/base/web/js/widget/video-background.js

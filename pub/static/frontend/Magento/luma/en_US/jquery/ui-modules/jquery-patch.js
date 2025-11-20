@@ -1,1 +1,0 @@
-/home/cloud/pipe/lib/web/jquery/ui-modules/jquery-patch.js

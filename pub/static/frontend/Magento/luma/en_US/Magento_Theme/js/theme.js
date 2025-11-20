@@ -1,1 +1,0 @@
-/home/cloud/pipe/vendor/magento/theme-frontend-blank/Magento_Theme/web/js/theme.js

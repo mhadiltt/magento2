@@ -15,6 +15,20 @@ spec:
       labels:
         app: magento-php
     spec:
+      initContainers:
+        - name: magento-init
+          image: "{{ .Values.php.image.repository }}:{{ .Values.php.image.tag }}"
+          imagePullPolicy: IfNotPresent
+          command:
+            - sh
+            - -c
+            - |
+              php -d memory_limit=2G bin/magento setup:upgrade || true
+              php -d memory_limit=2G bin/magento setup:static-content:deploy -f || true
+              php bin/magento cache:flush || true
+          volumeMounts:
+            - name: magento-code
+              mountPath: /var/www/html
       containers:
         - name: php
           image: "{{ .Values.php.image.repository }}:{{ .Values.php.image.tag }}"

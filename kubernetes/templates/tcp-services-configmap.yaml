@@ -1,7 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: tcp-services
-  namespace: magento2
-data:
-  "3306": "magento2/magento-db:3306"

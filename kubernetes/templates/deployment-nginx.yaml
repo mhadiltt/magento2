@@ -20,3 +20,11 @@ spec:
           image: "{{ .Values.nginx.image.repository }}:{{ .Values.nginx.image.tag }}"
           ports:
             - containerPort: {{ .Values.nginx.port }}
+          volumeMounts:
+            - name: magento-code
+              mountPath: /var/www/html
+      volumes:
+        - name: magento-code
+          hostPath:
+            path: /home/cloud/pipe
+            type: Directory

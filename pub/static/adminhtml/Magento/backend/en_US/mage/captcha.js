@@ -1,0 +1,1 @@
+/home/cloud/pipe/lib/web/mage/captcha.js

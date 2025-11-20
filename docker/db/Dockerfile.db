@@ -1,14 +1,15 @@
 # Dockerfile.db
 FROM mysql:8.0
 
-# Set environment variables for MySQL
 ENV MYSQL_ROOT_PASSWORD=root
 ENV MYSQL_DATABASE=pipe
 ENV MYSQL_USER=pipe
 ENV MYSQL_PASSWORD=1234
 
-# Copy the initial Magento DB dump
+# Copy initial dump only for first-time DB creation
 COPY ./docker/db/init.sql /docker-entrypoint-initdb.d/init.sql
 
 EXPOSE 3306
-CMD ["mysqld"]
+
+# FIXED: Use docker-entrypoint instead of "mysqld"
+CMD ["docker-entrypoint.sh", "mysqld"]

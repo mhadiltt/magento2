@@ -31,9 +31,10 @@ spec:
               value: "{{ .Values.db.env.MYSQL_USER }}"
             - name: MYSQL_PASSWORD
               value: "{{ .Values.db.env.MYSQL_PASSWORD }}"
-            # Disable SSL completely in MySQL server
             - name: MYSQL_SSL_MODE
               value: "DISABLED"
+            - name: MYSQL_ALLOW_EMPTY_PASSWORD
+              value: "yes"     # REQUIRED FIX
           volumeMounts:
             - name: db-storage
               mountPath: /var/lib/mysql

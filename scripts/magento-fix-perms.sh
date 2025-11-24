@@ -1,4 +1,4 @@
-kk#!/usr/bin/env bash
+#!/usr/bin/env bash
 #
 # scripts/magento-fix-perms.sh
 #

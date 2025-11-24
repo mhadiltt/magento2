@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/sh
 #
 # scripts/magento-fix-perms.sh
 #
@@ -6,9 +6,8 @@
 #   ./scripts/magento-fix-perms.sh                      # default: namespace=magento2, label=app=magento-php
 #   ./scripts/magento-fix-perms.sh -n myns -l "app=magento-php" -c php
 #
-set -o errexit
-set -o nounset
-set -o pipefail
+
+set -eu
 
 NAMESPACE="magento2"
 LABEL="app=magento-php"
@@ -43,34 +42,36 @@ echo "Label selector: $LABEL"
 echo "Container: $CONTAINER"
 echo
 
-end_time=$(( $(date +%s) + TIMEOUT ))
-pods=()
+end_time=$(($(date +%s) + TIMEOUT))
+pods=""
 
 echo "Waiting for pods that match selector [$LABEL] in namespace [$NAMESPACE]..."
-while [ $(date +%s) -lt $end_time ]; do
-  pods=( $(kubectl get pods -n "$NAMESPACE" -l "$LABEL" -o custom-columns=:metadata.name --no-headers 2>/dev/null || true) )
-  if [ ${#pods[@]} -gt 0 ]; then
-    echo "Found pods by label: ${pods[*]}"
+while [ "$(date +%s)" -lt "$end_time" ]; do
+  # try label selector first
+  pods=$(kubectl get pods -n "$NAMESPACE" -l "$LABEL" -o custom-columns=:metadata.name --no-headers 2>/dev/null | xargs || true)
+  if [ -n "$pods" ]; then
+    echo "Found pods by label: $pods"
     break
   fi
-  pods=( $(kubectl get pods -n "$NAMESPACE" -o custom-columns=:metadata.name --no-headers 2>/dev/null | grep -E 'magento-php' || true) )
-  if [ ${#pods[@]} -gt 0 ]; then
-    echo "Found pods by name substring 'magento-php': ${pods[*]}"
+
+  # fallback: find pods whose name contains magento-php
+  pods=$(kubectl get pods -n "$NAMESPACE" -o custom-columns=:metadata.name --no-headers 2>/dev/null | grep -E 'magento-php' | xargs || true)
+  if [ -n "$pods" ]; then
+    echo "Found pods by name substring 'magento-php': $pods"
     break
   fi
-  sleep $SLEEP
+
+  sleep "$SLEEP"
 done
 
-if [ ${#pods[@]} -eq 0 ]; then
+if [ -z "$pods" ]; then
   echo "No pods found for selector '$LABEL' or name 'magento-php' in namespace '$NAMESPACE' (timeout). Exiting."
   kubectl get pods -n "$NAMESPACE" --no-headers || true
   exit 1
 fi
 
 REMOTE_CMD=$(cat <<'REMOTE'
-set -o errexit
-set -o nounset
-set -o pipefail
+set -eu
 
 ROOT="/var/www/html"
 
@@ -96,20 +97,25 @@ echo "PERMISSIONS_FIXED"
 REMOTE
 )
 
-for pod in "${pods[@]}"; do
+# loop over each pod name
+for pod in $pods; do
   echo "-> Fixing permissions in pod: $pod (container: $CONTAINER)"
+
+  # try bash inside the target container first
   if kubectl exec -n "$NAMESPACE" "$pod" -c "$CONTAINER" -- bash -lc "$REMOTE_CMD" 2>/dev/null | tail -n1 | grep -q "PERMISSIONS_FIXED"; then
     echo "  done (bash)"
     continue
   fi
+
+  # fallback to sh inside the target container
   if kubectl exec -n "$NAMESPACE" "$pod" -c "$CONTAINER" -- sh -c "$REMOTE_CMD" 2>/dev/null | tail -n1 | grep -q "PERMISSIONS_FIXED"; then
     echo "  done (sh)"
     continue
   fi
+
   echo "  warning: unable to run remote fix in pod $pod. Pod may not have sh/bash or exec permission denied."
 done
 
 echo
 echo "Permission fix complete. If you still see permission issues, consider adding an initContainer to chown mounts or ensure pod runs as root for init steps."
 exit 0
-

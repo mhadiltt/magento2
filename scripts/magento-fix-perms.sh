@@ -1,36 +1,32 @@
 #!/bin/sh
-#
-# scripts/magento-fix-perms.sh
-#
-# Usage:
-#   ./scripts/magento-fix-perms.sh                      # default: namespace=magento2, label=app=magento-php
-#   ./scripts/magento-fix-perms.sh -n myns -l "app=magento-php" -c php
-#
 
 set -eu
 
 NAMESPACE="magento2"
 LABEL="app=magento-php"
 CONTAINER="php"
-TIMEOUT=300   # seconds to wait for pods
+POD_NAME=""
+TIMEOUT=300
 SLEEP=3
 
 usage() {
   cat <<EOF
-Usage: $0 [-n namespace] [-l podLabel] [-c container] [-t timeout]
+Usage: $0 [-n namespace] [-l podLabel] [-c container] [-p podName] [-t timeout]
   -n namespace   Kubernetes namespace (default: $NAMESPACE)
   -l podLabel    label selector used to find pods (default: $LABEL)
   -c container   container name inside pod (default: $CONTAINER)
-  -t timeout     max seconds to wait for pods (default: $TIMEOUT)
+  -p podName     specific pod name (NO kubectl get/list calls)
+  -t timeout     max seconds to wait for pods discovery (default: $TIMEOUT)
 EOF
   exit 1
 }
 
-while getopts "n:l:c:t:h" opt; do
+while getopts "n:l:c:p:t:h" opt; do
   case "$opt" in
     n) NAMESPACE="$OPTARG" ;;
     l) LABEL="$OPTARG" ;;
     c) CONTAINER="$OPTARG" ;;
+    p) POD_NAME="$OPTARG" ;;
     t) TIMEOUT="$OPTARG" ;;
     h) usage ;;
     *) usage ;;
@@ -40,34 +36,45 @@ done
 echo "Namespace: $NAMESPACE"
 echo "Label selector: $LABEL"
 echo "Container: $CONTAINER"
+if [ -n "$POD_NAME" ]; then
+  echo "Pod name override: $POD_NAME"
+fi
 echo
 
-end_time=$(($(date +%s) + TIMEOUT))
 pods=""
 
-echo "Waiting for pods that match selector [$LABEL] in namespace [$NAMESPACE]..."
-while [ "$(date +%s)" -lt "$end_time" ]; do
-  # try label selector first
-  pods=$(kubectl get pods -n "$NAMESPACE" -l "$LABEL" -o custom-columns=:metadata.name --no-headers 2>/dev/null | xargs || true)
-  if [ -n "$pods" ]; then
-    echo "Found pods by label: $pods"
-    break
-  fi
+if [ -n "$POD_NAME" ]; then
+  pods="$POD_NAME"
+else
+  end_time=$(($(date +%s) + TIMEOUT))
 
-  # fallback: find pods whose name contains magento-php
-  pods=$(kubectl get pods -n "$NAMESPACE" -o custom-columns=:metadata.name --no-headers 2>/dev/null | grep -E 'magento-php' | xargs || true)
-  if [ -n "$pods" ]; then
-    echo "Found pods by name substring 'magento-php': $pods"
-    break
-  fi
+  echo "Waiting for pods that match selector [$LABEL] in namespace [$NAMESPACE]..."
+  while [ "$(date +%s)" -lt "$end_time" ]; do
+    pods=$(kubectl get pods -n "$NAMESPACE" -l "$LABEL" -o custom-columns=:metadata.name --no-headers 2>/dev/null | xargs || true)
 
-  sleep "$SLEEP"
-done
+    if echo "$pods" | grep -qi "forbidden"; then
+      echo "RBAC forbids listing pods in namespace [$NAMESPACE]. Skipping permission fix."
+      exit 0
+    fi
+
+    if [ -n "$pods" ]; then
+      echo "Found pods by label: $pods"
+      break
+    fi
+
+    pods=$(kubectl get pods -n "$NAMESPACE" -o custom-columns=:metadata.name --no-headers 2>/dev/null | grep -E 'magento-php' | xargs || true)
+    if [ -n "$pods" ]; then
+      echo "Found pods by name substring 'magento-php': $pods"
+      break
+    fi
+
+    sleep "$SLEEP"
+  done
+fi
 
 if [ -z "$pods" ]; then
-  echo "No pods found for selector '$LABEL' or name 'magento-php' in namespace '$NAMESPACE' (timeout). Exiting."
-  kubectl get pods -n "$NAMESPACE" --no-headers || true
-  exit 1
+  echo "No pods available for selector '$LABEL' or provided name in namespace '$NAMESPACE'. Skipping permission fix."
+  exit 0
 fi
 
 REMOTE_CMD=$(cat <<'REMOTE'
@@ -97,17 +104,14 @@ echo "PERMISSIONS_FIXED"
 REMOTE
 )
 
-# loop over each pod name
 for pod in $pods; do
   echo "-> Fixing permissions in pod: $pod (container: $CONTAINER)"
 
-  # try bash inside the target container first
   if kubectl exec -n "$NAMESPACE" "$pod" -c "$CONTAINER" -- bash -lc "$REMOTE_CMD" 2>/dev/null | tail -n1 | grep -q "PERMISSIONS_FIXED"; then
     echo "  done (bash)"
     continue
   fi
 
-  # fallback to sh inside the target container
   if kubectl exec -n "$NAMESPACE" "$pod" -c "$CONTAINER" -- sh -c "$REMOTE_CMD" 2>/dev/null | tail -n1 | grep -q "PERMISSIONS_FIXED"; then
     echo "  done (sh)"
     continue
@@ -117,5 +121,5 @@ for pod in $pods; do
 done
 
 echo
-echo "Permission fix complete. If you still see permission issues, consider adding an initContainer to chown mounts or ensure pod runs as root for init steps."
+echo "Permission fix complete (or skipped if RBAC/pods not available)."
 exit 0

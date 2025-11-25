@@ -141,43 +141,6 @@ spec:
                 }
             }
         }
-
-        stage('🔧 Fix Pod Permissions') {
-            steps {
-                container('argocd') {
-                    withCredentials([usernamePassword(credentialsId: env.ARGOCD_CREDS, usernameVariable: 'ARGOCD_USER', passwordVariable: 'ARGOCD_PASS')]) {
-                        sh '''
-                            set -e
-                            echo "🔧 Ensuring permission-fix script is executable..."
-                            chmod +x scripts/magento-fix-perms.sh || true
-
-                            echo "🔎 Looking for kubectl in PATH..."
-                            if command -v kubectl >/dev/null 2>&1; then
-                              echo "kubectl found in PATH"
-                            else
-                              echo "kubectl not found. Attempting to download kubectl binary to workspace..."
-                              KUBECTL_BIN="$WORKSPACE/kubectl"
-                              if command -v curl >/dev/null 2>&1; then
-                                curl -L -o "$KUBECTL_BIN" "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" || true
-                              elif command -v wget >/dev/null 2>&1; then
-                                wget -O "$KUBECTL_BIN" "https://dl.k8s.io/release/$(wget -q -O - https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" || true
-                              else
-                                echo "Neither curl nor wget available to download kubectl. Ensure kubectl is present in the argocd container image or modify the Jenkins pod to include kubectl."
-                                exit 1
-                              fi
-                              chmod +x "$KUBECTL_BIN" || true
-                              export PATH="$WORKSPACE:$PATH"
-                              echo "kubectl downloaded to $KUBECTL_BIN and added to PATH"
-                            fi
-
-                            echo "🔧 Running permission-fix script..."
-                            ./scripts/magento-fix-perms.sh -n magento2 -l "app=magento-php" -c php
-                        '''
-                    }
-                }
-            }
-        }
-
     }
 
     post {

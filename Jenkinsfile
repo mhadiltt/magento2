@@ -93,7 +93,7 @@ spec:
                         echo "📂 Listing script directory..."
                         ls -la ${WORKSPACE}/scripts || true
                         chmod +x ${WORKSPACE}/scripts/magento-prepare.sh
-                        ${WORKSPACE}/scripts/magento-prepare.sh
+                        sh ${WORKSPACE}/scripts/magento-prepare.sh
                     '''
                 }
             }

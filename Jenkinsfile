@@ -84,6 +84,19 @@ spec:
             }
         }
 
+        stage('⚙️ Magento Pre-Build Setup') {
+            steps {
+                container('docker') {
+                    sh '''
+                        set -e
+                        echo "⚙️ Running Magento setup & static deployment..."
+                        chmod +x scripts/magento-prepare.sh
+                        ./scripts/magento-prepare.sh
+                    '''
+                }
+            }
+        }
+
         stage('🐘 Build & Push PHP Image') {
             steps {
                 container('docker') {

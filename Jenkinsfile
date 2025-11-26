@@ -90,8 +90,10 @@ spec:
                     sh '''
                         set -e
                         echo "⚙️ Running Magento setup & static deployment..."
-                        chmod +x scripts/magento-prepare.sh
-                        ./scripts/magento-prepare.sh
+                        echo "📂 Listing script directory..."
+                        ls -la ${WORKSPACE}/scripts || true
+                        chmod +x ${WORKSPACE}/scripts/magento-prepare.sh
+                        ${WORKSPACE}/scripts/magento-prepare.sh
                     '''
                 }
             }
@@ -116,7 +118,7 @@ spec:
                     sh '''
                         set -e
                         echo "🌐 Building NGINX Image: $NGINX_IMAGE_REPO:$IMAGE_TAG ..."
-                        docker build -t $NGINX_IMAGE_REPO:$IMAGE_TAG -f docker/nginx/Dockerfile.nginx .
+                        docker build -t $NGINX_IMAGE_REPO:$IMAGE_TAG -f docker/nginx/Dockerfile.nginx . 
                         docker push $NGINX_IMAGE_REPO:$IMAGE_TAG
                     '''
                 }

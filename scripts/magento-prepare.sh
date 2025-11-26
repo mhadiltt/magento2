@@ -1,12 +1,12 @@
-#!/bin/bash
+#!/bin/sh
 set -e
 
 echo "========================================"
 echo "🚀 Starting Magento setup preparation..."
 echo "========================================"
 
-# Go to Magento root (adjust if needed)
-cd /var/www/html || exit 1
+# Go to Magento project root (one level up from /scripts)
+cd "$(dirname "$0")/.." || exit 1
 
 echo "⚙️ Running setup upgrade..."
 php bin/magento setup:upgrade

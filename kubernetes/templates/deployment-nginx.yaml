@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: magento-nginx
-  namespace: magento2
+  namespace: {{ .Values.namespace }}
   labels:
     app: magento-nginx
 spec:
@@ -18,13 +18,7 @@ spec:
       containers:
         - name: nginx
           image: "{{ .Values.nginx.image.repository }}:{{ .Values.nginx.image.tag }}"
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: {{ .Values.nginx.port }}
-          volumeMounts:
-            - name: magento-code
-              mountPath: /var/www/html
-      volumes:
-        - name: magento-code
-          hostPath:
-            path: /home/cloud/pipe
-            type: Directory
+              protocol: TCP

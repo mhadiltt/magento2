@@ -11,36 +11,23 @@ spec:
   containers:
     - name: docker
       image: docker:24.0.6-dind
-      imagePullPolicy: IfNotPresent
       securityContext:
         privileged: true
       env:
         - name: DOCKER_TLS_CERTDIR
           value: ""
       volumeMounts:
-        - name: docker-graph-storage
-          mountPath: /var/lib/docker
         - name: docker-socket
           mountPath: /var/run
+        - name: docker-graph-storage
+          mountPath: /var/lib/docker
         - name: workspace-volume
           mountPath: /home/jenkins/agent
-          readOnly: false
-
     - name: argocd
       image: hadil01/argocd-cli:latest
-      imagePullPolicy: IfNotPresent
       volumeMounts:
         - name: workspace-volume
           mountPath: /home/jenkins/agent
-
-    - name: jnlp
-      image: jenkins/inbound-agent:latest
-      imagePullPolicy: IfNotPresent
-      tty: true
-      volumeMounts:
-        - name: workspace-volume
-          mountPath: /home/jenkins/agent
-
   volumes:
     - name: docker-socket
       emptyDir: {}
@@ -63,11 +50,8 @@ spec:
     }
 
     stages {
-
         stage('📥 Checkout Code') {
-            steps {
-                checkout scm
-            }
+            steps { checkout scm }
         }
 
         stage('🔐 Docker Login') {
@@ -80,21 +64,6 @@ spec:
                             echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
                         '''
                     }
-                }
-            }
-        }
-
-        stage('⚙️ Magento Pre-Build Setup') {
-            steps {
-                container('docker') {
-                    sh '''
-                        set -e
-                        echo "⚙️ Running Magento setup & static deployment..."
-                        echo "📂 Listing script directory..."
-                        ls -la ${WORKSPACE}/scripts || true
-                        chmod +x ${WORKSPACE}/scripts/magento-prepare.sh
-                        sh ${WORKSPACE}/scripts/magento-prepare.sh
-                    '''
                 }
             }
         }
@@ -112,13 +81,15 @@ spec:
             }
         }
 
-        stage('🌐 Build & Push NGINX Image') {
+        stage('🌐 Build & Push NGINX Image (Using same PHP tag)') {
             steps {
                 container('docker') {
                     sh '''
                         set -e
-                        echo "🌐 Building NGINX Image: $NGINX_IMAGE_REPO:$IMAGE_TAG ..."
-                        docker build -t $NGINX_IMAGE_REPO:$IMAGE_TAG -f docker/nginx/Dockerfile.nginx . 
+                        echo "🌐 Building NGINX Image using PHP tag $IMAGE_TAG ..."
+                        docker build --build-arg PHP_TAG=$IMAGE_TAG \
+                            -t $NGINX_IMAGE_REPO:$IMAGE_TAG \
+                            -f docker/nginx/Dockerfile.nginx .
                         docker push $NGINX_IMAGE_REPO:$IMAGE_TAG
                     '''
                 }
@@ -134,23 +105,13 @@ spec:
                             echo "🔑 Logging into ArgoCD..."
                             argocd login $ARGOCD_SERVER --username $ARGOCD_USER --password $ARGOCD_PASS --insecure
 
-                            echo "🧩 Updating Helm values with new image tags (php & nginx only)..."
+                            echo "🧩 Updating Helm values with new image tags..."
                             argocd app set $ARGOCD_APP_NAME \
                                 --helm-set php.image.tag=$IMAGE_TAG \
                                 --helm-set nginx.image.tag=$IMAGE_TAG
 
                             echo "🔄 Syncing ArgoCD application..."
-                            n=0
-                            until [ "$n" -ge 5 ]
-                            do
-                              if argocd app sync $ARGOCD_APP_NAME --async --prune --force; then
-                                echo "✅ ArgoCD sync started successfully!"
-                                break
-                              fi
-                              echo "⚠️ Sync attempt $((n+1)) failed, retrying in 10s..."
-                              n=$((n+1))
-                              sleep 10
-                            done
+                            argocd app sync $ARGOCD_APP_NAME --prune --force
                         '''
                     }
                 }

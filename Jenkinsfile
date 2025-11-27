@@ -12,13 +12,28 @@ spec:
     - name: php
       image: hadil01/php-base:8.2
       imagePullPolicy: IfNotPresent
-      command:
-        - cat
+      command: ["cat"]
       tty: true
       volumeMounts:
         - name: workspace-volume
           mountPath: /home/jenkins/agent
           readOnly: false
+
+    - name: opensearch
+      image: opensearchproject/opensearch:2.11.0
+      imagePullPolicy: IfNotPresent
+      env:
+        - name: discovery.type
+          value: single-node
+        - name: DISABLE_SECURITY_PLUGIN
+          value: "true"
+      ports:
+        - containerPort: 9200
+      resources:
+        limits:
+          memory: "1Gi"
+          cpu: "500m"
+      tty: true
 
     - name: docker
       image: docker:24.0.6-dind
@@ -91,6 +106,14 @@ spec:
                         echo "===================================="
                         echo "Running Magento Preparation Script"
                         echo "===================================="
+
+                        # Wait until OpenSearch responds
+                        echo "⏳ Waiting for OpenSearch to be ready..."
+                        until curl -s http://opensearch:9200 >/dev/null 2>&1; do
+                          sleep 5
+                          echo "🔄 Waiting for OpenSearch..."
+                        done
+                        echo "✅ OpenSearch is reachable."
 
                         chmod +x scripts/magento-prepare.sh
                         ./scripts/magento-prepare.sh

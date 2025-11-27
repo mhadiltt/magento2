@@ -93,6 +93,9 @@ spec:
                         echo "===================================="
 
                         chmod +x scripts/magento-prepare.sh
+
+                        sed -i 's|setup:upgrade|setup:upgrade --skip-search-engine-validation|g' scripts/magento-prepare.sh
+
                         ./scripts/magento-prepare.sh
 
                         echo "✅ Magento preparation completed"

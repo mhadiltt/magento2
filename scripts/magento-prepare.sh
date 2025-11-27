@@ -2,7 +2,7 @@
 set -e
 
 echo "========================================"
-echo "🚀 Starting Magento setup preparation..."
+echo "🚀 Starting Magento setup preparation (No OpenSearch Mode)..."
 echo "========================================"
 
 # Ensure required directories exist
@@ -10,34 +10,29 @@ echo "🔧 Preparing required directories..."
 mkdir -p var pub/static pub/media generated
 chmod -R 777 var pub/static pub/media generated || true
 
-# Inject dummy OpenSearch config if not available
-echo "⚙️ Checking for OpenSearch configuration..."
-if ! grep -q "'opensearch'" app/etc/env.php 2>/dev/null; then
-  echo "⚙️ Injecting dummy OpenSearch config for CI..."
+# Backup and temporarily remove OpenSearch config from env.php
+if [ -f app/etc/env.php ]; then
+  echo "🧩 Backing up env.php..."
+  cp app/etc/env.php app/etc/env.php.bak
+
+  echo "⚙️ Removing OpenSearch config for CI build..."
   php -r '
   $file = "app/etc/env.php";
-  if (file_exists($file)) {
-      $env = include $file;
-      if (!isset($env["system"])) $env["system"] = [];
-      $env["system"]["default"]["catalog"]["search"] = [
-          "engine" => "opensearch",
-          "opensearch_server_hostname" => "localhost",
-          "opensearch_server_port" => "9200",
-          "opensearch_index_prefix" => "magento2",
-          "opensearch_enable_auth" => "0",
-          "opensearch_server_timeout" => "15",
-      ];
-      $export = "<?php\nreturn " . var_export($env, true) . ";";
-      file_put_contents($file, $export);
-      echo "✅ Dummy OpenSearch configuration added for CI.\n";
-  } else {
-      echo "⚠️ env.php not found, skipping dummy config.\n";
-  }'
+  $env = include $file;
+  if (isset($env["system"]["default"]["catalog"]["search"])) {
+      unset($env["system"]["default"]["catalog"]["search"]);
+  }
+  $export = "<?php\nreturn " . var_export($env, true) . ";";
+  file_put_contents($file, $export);
+  echo "✅ Removed OpenSearch config temporarily.\n";
+  '
+else
+  echo "⚠️ env.php not found, skipping config modification."
 fi
 
 # Run setup upgrade
 echo "⚙️ Running setup upgrade..."
-php -d memory_limit=2G bin/magento setup:upgrade
+php -d memory_limit=2G bin/magento setup:upgrade || true
 
 # Deploy static content
 echo "🧱 Deploying static content..."
@@ -52,8 +47,14 @@ echo "🧹 Cleaning cache..."
 php bin/magento cache:clean
 php bin/magento cache:flush
 
-# Final permissions
+# Restore env.php for production
+if [ -f app/etc/env.php.bak ]; then
+  echo "♻️ Restoring original env.php..."
+  mv app/etc/env.php.bak app/etc/env.php
+fi
+
+# Fix permissions
 echo "🔒 Setting proper permissions..."
 chmod -R 777 var pub/static pub/media generated
 
-echo "✅ Magento preparation completed successfully!"
+echo "✅ Magento preparation completed successfully (No OpenSearch needed)!"

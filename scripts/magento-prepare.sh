@@ -5,31 +5,40 @@ echo "========================================"
 echo "🚀 Starting Magento setup preparation..."
 echo "========================================"
 
-# Ensure proper working directory
-cd "$(pwd)" || exit 1
-
-# Ensure permissions before starting
-echo "🔧 Setting permissions before setup..."
+echo "🔧 Preparing required directories..."
+mkdir -p var pub/static pub/media generated
 chmod -R 777 var pub/static pub/media generated || true
 
-# Run setup upgrade safely
-echo "⚙️ Running setup upgrade..."
-php -d memory_limit=2G bin/magento setup:upgrade --skip-search-engine-validation
+echo "⚙️ Setting search engine to MySQL for CI..."
+php -r '
+$envFile = "app/etc/env.php";
+if (file_exists($envFile)) {
+    $data = include $envFile;
+    if (!isset($data["system"])) { $data["system"] = []; }
+    if (!isset($data["system"]["default"])) { $data["system"]["default"] = []; }
+    if (!isset($data["system"]["default"]["catalog"])) { $data["system"]["default"]["catalog"] = []; }
+    if (!isset($data["system"]["default"]["catalog"]["search"])) { $data["system"]["default"]["catalog"]["search"] = []; }
+    $data["system"]["default"]["catalog"]["search"]["engine"] = "mysql";
+    $export = "<?php\nreturn " . var_export($data, true) . ";";
+    file_put_contents($envFile, $export);
+    echo "✅ Search engine temporarily set to MySQL\n";
+} else {
+    echo "⚠️ env.php not found; skipping search engine switch\n";
+}'
 
-# Deploy static content
+echo "⚙️ Running setup upgrade..."
+php -d memory_limit=2G bin/magento setup:upgrade
+
 echo "🧱 Deploying static content..."
 php -d memory_limit=2G bin/magento setup:static-content:deploy -f
 
-# Compile DI
 echo "🧰 Compiling DI..."
 php -d memory_limit=2G bin/magento setup:di:compile
 
-# Clean cache
 echo "🧹 Cleaning cache..."
 php bin/magento cache:clean
 php bin/magento cache:flush
 
-# Set final permissions
 echo "🔒 Setting proper permissions..."
 chmod -R 777 var pub/static pub/media generated
 
